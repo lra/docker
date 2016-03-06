@@ -4,6 +4,8 @@ Some Docker stuff I use.
 
 ## go-ethereum
 
+Official golang implementation of the Ethereum protocol.
+
 ### Features
 
 - Don't run `geth` as root
