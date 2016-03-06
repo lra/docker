@@ -1,5 +1,7 @@
 # Docker
 
+[![Circle CI](https://circleci.com/gh/lra/docker.svg?style=svg)](https://circleci.com/gh/lra/docker)
+
 Some Docker stuff I use.
 
 ## go-ethereum
