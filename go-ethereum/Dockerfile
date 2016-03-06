@@ -6,7 +6,9 @@ RUN useradd ethereum
 RUN mkdir /var/lib/ethereum
 RUN chown ethereum /var/lib/ethereum
 
+EXPOSE 8545
 EXPOSE 30303
+
 USER ethereum
 VOLUME /var/lib/ethereum
 WORKDIR /var/lib/ethereum
