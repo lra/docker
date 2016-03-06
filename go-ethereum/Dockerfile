@@ -2,11 +2,13 @@ FROM debian
 MAINTAINER Laurent Raufaste <analogue@glop.org>
 
 COPY geth /usr/local/bin/geth
-RUN useradd --create-home ethereum
+RUN useradd ethereum
+RUN mkdir /var/lib/ethereum
+RUN chown ethereum /var/lib/ethereum
 
 EXPOSE 30303
 USER ethereum
-VOLUME /home/ethereum
-WORKDIR /home/ethereum
+VOLUME /var/lib/ethereum
+WORKDIR /var/lib/ethereum
 
-CMD /usr/local/bin/geth
+ENTRYPOINT ["/usr/local/bin/geth", "--datadir", "/var/lib/ethereum"]
