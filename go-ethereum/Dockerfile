@@ -14,4 +14,4 @@ VOLUME /var/lib/ethereum
 USER ethereum
 WORKDIR /var/lib/ethereum
 
-ENTRYPOINT ["/usr/local/bin/geth", "--datadir", "/var/lib/ethereum"]
+ENTRYPOINT ["/usr/local/bin/geth", "--rpc", "--datadir", "/var/lib/ethereum"]
