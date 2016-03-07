@@ -15,4 +15,11 @@ Official golang implementation of the Ethereum protocol.
 
 ### Usage
 
-```docker run -d -P lolo/go-ethereum```
+```
+# Create the persistent volume that will persist the Ethereum blockchain.
+docker volume create --name ethereum-data
+
+# Launch the Go Ethereum container with ports forwarded to the host, and the
+# ethereum-data volume mounted
+docker run -P -v ethereum-data:/var/lib/ethereum lolo/go-ethereum
+```
