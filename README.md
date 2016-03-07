@@ -23,3 +23,7 @@ docker volume create --name ethereum-data
 # ethereum-data volume mounted
 docker run -P -v ethereum-data:/var/lib/ethereum lolo/go-ethereum
 ```
+
+## Requirements
+
+- Docker 1.10.2+
