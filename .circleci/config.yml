@@ -33,7 +33,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker info
-      - run: docker build -t lolo/build-http-daemon-with-db build-http-daemon-with-db
+      - run: docker build -t lolo/build-http-daemon-with-db http-daemon-with-db
       - run: docker run lolo/build-http-daemon-with-db
 
 workflows:
