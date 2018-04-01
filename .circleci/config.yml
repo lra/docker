@@ -1,0 +1,23 @@
+version: 2
+jobs:
+  mdl:
+    docker:
+      - image: rsrchboy/mdl
+    steps:
+      - checkout
+      - run: mdl .
+  docker:
+    docker:
+      - image: docker
+    steps:
+      - checkout
+      - run: docker info
+      - run: docker build -t lolo/go-ethereum go-ethereum
+      - run: docker run lolo/go-ethereum version
+
+workflows:
+  version: 2
+  docker:
+    jobs:
+      - mdl
+      - docker
