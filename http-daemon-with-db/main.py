@@ -16,7 +16,6 @@ Options:
 
 import os
 import sys
-import docopt
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from docopt import docopt
 
