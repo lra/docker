@@ -14,6 +14,13 @@ jobs:
       - run: docker info
       - run: docker build -t lolo/go-ethereum go-ethereum
       - run: docker run lolo/go-ethereum version
+  flake8:
+    docker:
+      - image: python
+    steps:
+      - checkout
+      - run: pip install flake8
+      - run: flake8 http-daemon-with-db
 
 workflows:
   version: 2
@@ -21,3 +28,4 @@ workflows:
     jobs:
       - mdl
       - docker
+      - flake8
