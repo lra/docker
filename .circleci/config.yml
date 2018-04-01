@@ -1,20 +1,13 @@
 version: 2
 jobs:
+
   mdl:
     docker:
       - image: rsrchboy/mdl
     steps:
       - checkout
       - run: mdl .
-  docker:
-    docker:
-      - image: docker
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run: docker info
-      - run: docker build -t lolo/go-ethereum go-ethereum
-      - run: docker run lolo/go-ethereum version
+
   flake8:
     docker:
       - image: python
@@ -23,10 +16,31 @@ jobs:
       - run: pip install flake8
       - run: flake8 http-daemon-with-db
 
+  build-go-ethereum:
+    docker:
+      - image: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker info
+      - run: docker build -t lolo/go-ethereum go-ethereum
+      - run: docker run lolo/go-ethereum version
+
+  build-http-daemon-with-db:
+    docker:
+      - image: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker info
+      - run: docker build -t lolo/build-http-daemon-with-db build-http-daemon-with-db
+      - run: docker run lolo/build-http-daemon-with-db
+
 workflows:
   version: 2
   docker:
     jobs:
       - mdl
-      - docker
       - flake8
+      - build-go-ethereum
+      - build-http-daemon-with-db
