@@ -6,6 +6,7 @@ DATABASE_URL env var.
 Usage:
   main.py (-h | --help)
   main.py --env
+  main.py --no-daemon
   main.py
 
 Options:
@@ -68,5 +69,12 @@ if __name__ == '__main__':
 
     if 'DATABASE_URL' not in os.environ:
         sys.exit('Error: Undefined DATABASE_URL env var.')
+
+    if arguments['--no-daemon']:
+        if test_database_connection(os.environ['DATABASE_URL']):
+            print("Connection successful!")
+            sys.exit()
+        else:
+            sys.exit("Connection failed =(")
 
     run_httpd()

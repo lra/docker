@@ -22,7 +22,6 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: docker info
       - run: docker build -t lolo/go-ethereum go-ethereum
       - run: docker run lolo/go-ethereum version
 
@@ -36,11 +35,10 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: docker info
       - run: docker build -t lolo/http-daemon-with-db http-daemon-with-db
       - run: docker run lolo/http-daemon-with-db --env
-      - run: docker run --env "DATABASE_URL=mysql://" lolo/http-daemon-with-db
-      - run: docker run --env "DATABASE_URL=postgresql://" lolo/http-daemon-with-db
+      - run: docker run --env "DATABASE_URL=mysql://" lolo/http-daemon-with-db --no-daemon
+      - run: docker run --env "DATABASE_URL=postgresql://" lolo/http-daemon-with-db --no-daemon
 
 workflows:
   version: 2
