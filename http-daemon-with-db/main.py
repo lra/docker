@@ -59,14 +59,14 @@ def run_httpd():
 if __name__ == '__main__':
     arguments = docopt(__doc__)
 
-    if arguments['--env']:
+    if arguments['dump-env-vars']:
         print(os.environ)
         sys.exit()
 
     if 'DATABASE_URL' not in os.environ:
         sys.exit('Error: Undefined DATABASE_URL env var.')
 
-    if arguments['--no-daemon']:
+    if arguments['no-daemon']:
         if test_database_connection(os.environ['DATABASE_URL']):
             print("Connection successful!")
             sys.exit()
