@@ -34,20 +34,21 @@ jobs:
       - run: docker build -t lolo/http-daemon-with-db http-daemon-with-db
       - run: docker run lolo/http-daemon-with-db dump-env-vars
 
-  test-http-daemon-with-mysql:
+  test-http-daemon-with-db:
     docker:
-      - image: lolo/http-daemon-with-db
+      - image: python
       - image: circleci/mysql
       - image: circleci/postgres
     steps:
       - checkout
-      - run: python project/http-daemon-with-db/main.py dump-env-vars
+      - run: pip install --requirement http-daemon-with-db/requirements.txt
+      - run: python http-daemon-with-db/main.py dump-env-vars
       - run:
-          command: python project/http-daemon-with-db/main.py no-daemon
+          command: python http-daemon-with-db/main.py no-daemon
           environment:
             DATABASE_URL: "mysql://"
       - run:
-          command: python project/http-daemon-with-db/main.py no-daemon
+          command: python http-daemon-with-db/main.py no-daemon
           environment:
             DATABASE_URL: "postgresql://"
 
@@ -59,6 +60,4 @@ workflows:
       - flake8
       - build-go-ethereum
       - build-http-daemon-with-db
-      - test-http-daemon-with-mysql:
-          requires:
-            - build-http-daemon-with-db
+      - test-http-daemon-with-db
