@@ -60,6 +60,26 @@ jobs:
           environment:
             DATABASE_URL: "postgresql://127.0.0.1/postgres"
 
+  deploy-go-ethereum:
+    docker:
+      - image: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker build -t lolo/go-ethereum go-ethereum
+      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+      - run: docker push lra/go-ethereum
+
+  deploy-http-daemon-with-db:
+    docker:
+      - image: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker build -t lolo/http-daemon-with-db http-daemon-with-db
+      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+      - run: docker push lra/http-daemon-with-db
+
 workflows:
   version: 2
   docker:
@@ -73,3 +93,15 @@ workflows:
           requires:
             - test-http-daemon-with-mysql
             - test-http-daemon-with-postgresql
+      - deploy-go-ethereum:
+          requires:
+            - build-go-ethereum
+          filters:
+            branches:
+              only: master
+      - deploy-http-daemon-with-db:
+          requires:
+            - build-http-daemon-with-db
+          filters:
+            branches:
+              only: master
