@@ -1,0 +1,107 @@
+version: 2
+jobs:
+
+  mdl:
+    docker:
+      - image: rsrchboy/mdl
+    steps:
+      - checkout
+      - run: mdl .
+
+  flake8:
+    docker:
+      - image: python
+    steps:
+      - checkout
+      - run: pip install flake8
+      - run: flake8 http-daemon-with-db
+
+  build-go-ethereum:
+    docker:
+      - image: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker build -t lolo/go-ethereum go-ethereum
+      - run: docker run lolo/go-ethereum version
+
+  build-http-daemon-with-db:
+    docker:
+      - image: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker build -t lolo/http-daemon-with-db http-daemon-with-db
+      - run: docker run lolo/http-daemon-with-db dump-env-vars
+
+  test-http-daemon-with-mysql:
+    docker:
+      - image: python
+      - image: circleci/mysql
+    steps:
+      - checkout
+      - run: pip install --requirement http-daemon-with-db/requirements.txt
+      - run: python http-daemon-with-db/main.py dump-env-vars
+      - run:
+          command: python http-daemon-with-db/main.py no-daemon
+          environment:
+            DATABASE_URL: "mysql://127.0.0.1"
+
+  test-http-daemon-with-postgresql:
+    docker:
+      - image: python
+      - image: circleci/postgres
+    steps:
+      - checkout
+      - run: pip install --requirement http-daemon-with-db/requirements.txt
+      - run: python http-daemon-with-db/main.py dump-env-vars
+      - run:
+          command: python http-daemon-with-db/main.py no-daemon
+          environment:
+            DATABASE_URL: "postgresql://127.0.0.1/postgres"
+
+  deploy-go-ethereum:
+    docker:
+      - image: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker build -t lolo/go-ethereum go-ethereum
+      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+      - run: docker push lolo/go-ethereum
+
+  deploy-http-daemon-with-db:
+    docker:
+      - image: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker build -t lolo/http-daemon-with-db http-daemon-with-db
+      - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+      - run: docker push lolo/http-daemon-with-db
+
+workflows:
+  version: 2
+  docker:
+    jobs:
+      - mdl
+      - flake8
+      - build-go-ethereum
+      - test-http-daemon-with-mysql
+      - test-http-daemon-with-postgresql
+      - build-http-daemon-with-db:
+          requires:
+            - test-http-daemon-with-mysql
+            - test-http-daemon-with-postgresql
+      - deploy-go-ethereum:
+          requires:
+            - build-go-ethereum
+          filters:
+            branches:
+              only: master
+      - deploy-http-daemon-with-db:
+          requires:
+            - build-http-daemon-with-db
+          filters:
+            branches:
+              only: master
