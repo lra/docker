@@ -14,7 +14,7 @@ jobs:
     steps:
       - checkout
       - run: pip install flake8
-      - run: flake8 http-daemon-with-db
+      - run: flake8 --ignore=E722 http-daemon-with-db
 
   build-go-ethereum:
     docker:
@@ -30,7 +30,7 @@ jobs:
     docker:
       - image: docker
       - image: mysql
-      - image: postgresql
+      - image: postgres
     steps:
       - checkout
       - setup_remote_docker
