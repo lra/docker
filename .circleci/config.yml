@@ -68,7 +68,7 @@ jobs:
       - setup_remote_docker
       - run: docker build -t lolo/go-ethereum go-ethereum
       - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-      - run: docker push lra/go-ethereum
+      - run: docker push lolo/go-ethereum
 
   deploy-http-daemon-with-db:
     docker:
@@ -78,7 +78,7 @@ jobs:
       - setup_remote_docker
       - run: docker build -t lolo/http-daemon-with-db http-daemon-with-db
       - run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-      - run: docker push lra/http-daemon-with-db
+      - run: docker push lolo/http-daemon-with-db
 
 workflows:
   version: 2
