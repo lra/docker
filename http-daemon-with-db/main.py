@@ -1,7 +1,7 @@
 """http-daemon-with-db
 
 Runs a python http daemon trying to connect to the database defined by the
-DB_URL env var.
+DATABASE_URL env var.
 
 Usage:
   main.py (-h | --help)
@@ -18,14 +18,39 @@ import os
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from docopt import docopt
+from sqlalchemy import create_engine
+import datetime
 
 
 class SimpleServer(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        self.send_header('Content-type', 'text/plain')
         self.end_headers()
         self.wfile.write(bytes("hi!\n", "utf8"))
+        if test_database_connection(os.environ['DATABASE_URL']):
+            self.wfile.write(bytes("Connection successful!\n", "utf8"))
+        else:
+            self.wfile.write(bytes("Connection failed =(\n", "utf8"))
+        self.wfile.write(bytes("Bye.\n", "utf8"))
+
+
+def test_database_connection(conn):
+    """
+    conn (unicode): Database URL.
+    See http://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls
+    """
+    try:
+        engine = create_engine(conn)
+        connection = engine.connect()
+        result = connection.execute("SELECT NOW()")
+        row = result.fetchone()
+        dt = row[0]
+        connection.close()
+    except:
+        dt = None
+
+    return isinstance(dt, datetime.datetime)
 
 
 def run_httpd():
@@ -40,5 +65,8 @@ if __name__ == '__main__':
     if arguments['--env']:
         print(os.environ)
         sys.exit()
+
+    if 'DATABASE_URL' not in os.environ:
+        sys.exit('Error: Undefined DATABASE_URL env var.')
 
     run_httpd()

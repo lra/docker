@@ -3,7 +3,8 @@ LABEL maintainer="Laurent Raufaste <analogue@glop.org>"
 LABEL version="0.1"
 
 COPY main.py main.py
-RUN pip install docopt
+COPY requirements.txt requirements.txt
+RUN pip install --requirement requirements.txt
 
 EXPOSE 8000
 
