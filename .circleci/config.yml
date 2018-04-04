@@ -14,7 +14,7 @@ jobs:
     steps:
       - checkout
       - run: pip install flake8
-      - run: flake8 --ignore=E722 http-daemon-with-db
+      - run: flake8 http-daemon-with-db
 
   build-go-ethereum:
     docker:
@@ -36,9 +36,9 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker build -t lolo/http-daemon-with-db http-daemon-with-db
-      - run: docker run lolo/http-daemon-with-db --env
-      - run: docker run --env "DATABASE_URL=mysql://" lolo/http-daemon-with-db --no-daemon
-      - run: docker run --env "DATABASE_URL=postgresql://" lolo/http-daemon-with-db --no-daemon
+      - run: docker run lolo/http-daemon-with-db dump-env-vars
+      - run: docker run --env "DATABASE_URL=mysql://root@localhost" lolo/http-daemon-with-db no-daemon
+      - run: docker run --env "DATABASE_URL=postgresql://" lolo/http-daemon-with-db no-daemon
 
 workflows:
   version: 2

@@ -4,14 +4,13 @@ Runs a python http daemon trying to connect to the database defined by the
 DATABASE_URL env var.
 
 Usage:
-  main.py (-h | --help)
-  main.py --env
-  main.py --no-daemon
   main.py
+  main.py dump-env-vars
+  main.py no-daemon
+  main.py (-h | --help)
 
 Options:
   -h --help     Show this screen.
-  --env         Show environment variables.
 
 """
 
@@ -41,15 +40,12 @@ def test_database_connection(conn):
     conn (unicode): Database URL.
     See http://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls
     """
-    try:
-        engine = create_engine(conn)
-        connection = engine.connect()
-        result = connection.execute("SELECT NOW()")
-        row = result.fetchone()
-        dt = row[0]
-        connection.close()
-    except:
-        dt = None
+    engine = create_engine(conn)
+    connection = engine.connect()
+    result = connection.execute("SELECT NOW()")
+    row = result.fetchone()
+    dt = row[0]
+    connection.close()
 
     return isinstance(dt, datetime.datetime)
 

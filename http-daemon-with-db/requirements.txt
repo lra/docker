@@ -1,3 +1,4 @@
 docopt
 SQLAlchemy
 mysqlclient
+psycopg2
