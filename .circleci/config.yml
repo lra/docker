@@ -28,18 +28,28 @@ jobs:
   build-http-daemon-with-db:
     docker:
       - image: docker
-      - image: circleci/mysql:5.6
-        environment:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
-          MYSQL_ROOT_HOST: "%"
-      - image: circleci/postgres
     steps:
       - checkout
       - setup_remote_docker
       - run: docker build -t lolo/http-daemon-with-db http-daemon-with-db
       - run: docker run lolo/http-daemon-with-db dump-env-vars
-      - run: docker run --env "DATABASE_URL=mysql://root@127.0.0.1/circle_test" lolo/http-daemon-with-db no-daemon
-      - run: docker run --env "DATABASE_URL=postgresql://" lolo/http-daemon-with-db no-daemon
+
+  test-http-daemon-with-mysql:
+    docker:
+      - image: lolo/http-daemon-with-db
+      - image: circleci/mysql
+      - image: circleci/postgres
+    steps:
+      - checkout
+      - run: python project/http-daemon-with-db/main.py dump-env-vars
+      - run:
+          command: python project/http-daemon-with-db/main.py no-daemon
+          environment:
+            DATABASE_URL: "mysql://"
+      - run:
+          command: python project/http-daemon-with-db/main.py no-daemon
+          environment:
+            DATABASE_URL: "postgresql://"
 
 workflows:
   version: 2
@@ -49,3 +59,6 @@ workflows:
       - flake8
       - build-go-ethereum
       - build-http-daemon-with-db
+      - test-http-daemon-with-mysql:
+          requires:
+            - build-http-daemon-with-db
